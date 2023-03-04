@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import AppFormControl from "@/components/AppFormControl.vue";
+import AppFormControl from "@/components/TheFooterFormControl.vue";
 
 export default {
   components: { AppFormControl },

@@ -2,6 +2,7 @@
   <div class="favorite-icon">
     <svg
       class="favorite-icon__icon"
+      :class="{'favorite-icon__icon_active': inFavorite}"
       id="Layer_1"
       style="enable-background: new 0 0 128 128"
       version="1.1"
@@ -27,7 +28,10 @@ import { mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["favoriteItemsCount"]),
+    ...mapGetters('favorite', ["favoriteItemsCount"]),
+    inFavorite() {
+      return this.$route.path === '/favorite';
+    }
   },
 };
 </script>
@@ -46,6 +50,9 @@ export default {
   &__icon
     stroke: #fff
     fill: #fff
+    &_active
+      fill: yellow
+      stroke: yellow
 
   &__favorite-items-count
     background-color: #f91155

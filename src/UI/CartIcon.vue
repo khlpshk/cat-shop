@@ -2,7 +2,7 @@
   <div class="cart-icon">
     <svg
       class="cart-icon__icon"
-      :class="{'cart-icon__icon_active': inCart}"
+      :class="{ 'cart-icon__icon_active': inCart }"
       version="1.1"
       id="Capa_1"
       xmlns="http://www.w3.org/2000/svg"
@@ -54,10 +54,10 @@ import { mapGetters } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters(["cartItemsCount"]),
+    ...mapGetters("cart", ["cartItemsCount"]),
     inCart() {
-      return this.$route.path.includes('cart');
-    }
+      return this.$route.path === "/cart";
+    },
   },
 };
 </script>

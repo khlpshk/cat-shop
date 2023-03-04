@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Main from "@/views/Main";
-import Gallery from "@/views/Gallery";
+import Galery from "@/views/Galery";
 import News from "@/views/News";
+import AppNewsList from "@/components/AppNewsList";
+import AppNewsPage from "@/components/AppNewsPage";
 import About from "@/views/About";
 import CartItems from "@/views/CartItems";
-import FavoriteItems from "@/views/FavoriteItems";
+import Favorite from "@/views/Favorite";
 
 const router = createRouter({
   history: createWebHistory(),
@@ -14,29 +16,45 @@ const router = createRouter({
       component: Main,
     },
     {
-      path: '/cart',
+      path: "/cart",
       component: CartItems,
-      props: true,
     },
     {
-      path: '/favorite',
-      component: FavoriteItems,
-      props: true,
+      path: "/favorite",
+      component: Favorite,
     },
     {
-      path: "/gallery",
-      component: Gallery,
+      path: "/galery",
+      component: Galery,
     },
     {
       path: "/news",
       component: News,
+      children: [
+        {
+          path: "",
+          name: "newsList",
+          component: AppNewsList,
+        },
+        {
+          path: ":newsItemId",
+          name: "newsPage",
+          component: AppNewsPage,
+          props: (route) => ({
+            ...route.params,
+          }),
+        },
+      ],
     },
     {
       path: "/about",
       component: About,
     },
   ],
-  linkActiveClass: "navbar__link_active",
+  scrollBehavior(to, from, savePosition) {
+    return { top: 0, left: 0 };
+  },
+  linkActiveClass: "active",
   linkExactActiveClass: "active",
 });
 

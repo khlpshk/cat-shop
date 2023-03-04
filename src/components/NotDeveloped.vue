@@ -26,8 +26,8 @@
     </div>
     <div class="not-developed-page__button">
       <app-button
-        btnText="Вернуться назад"
-        @action="$router.push($router.options.history.state.back)"
+        btnText="Вернуться на главную"
+        @action="$router.push('/')"
       />
     </div>
   </div>

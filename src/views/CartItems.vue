@@ -1,7 +1,7 @@
 <template>
-  <div class="cat-cart-page wrapper">
-    <div class="cat-cart-page__empty-cart" v-if="cartItemsCount === 0">
-      <div class="cart-icon">
+  <div class="cat-cart-page">
+    <div class="cart-page__empty-cart" v-if="cartItemsCount === 0">
+      <div class="cart-page__cart-icon">
         <svg
           fill="black"
           width="100px"
@@ -46,39 +46,28 @@
           </g>
         </svg>
       </div>
-      <div class="cat-cart-page__title">В корзине нет котов</div>
-      <div class="cart-button">
-        <app-button
-          btnText="Вернуться назад"
-          @action="$router.push($router.options.history.state.back)"
-        />
+      <div class="cart-page__title">В корзине нет котов</div>
+      <div class="cart-page__button">
+        <app-button btnText="Вернуться назад" @action="$router.go(-1)" />
       </div>
     </div>
     <div class="cat-cart-page__cart" v-else>
-      <span
-        class="go-back"
-        @click="$router.push($router.options.history.state.back)"
-        >Вернуться назад</span
-      >
-      <div class="cat-cart-page__content">
-        <div class="cat-cart-page__cart-list">
-          <app-cat-cart-item
-            v-for="cat in cartItems"
-            :key="cat.id"
-            :cat="cat"
-          />
+      <go-back-btn />
+      <div class="cart-page__content">
+        <div class="cart-page__cart-list">
+          <app-cart-list :cartItems="cartItems" />
         </div>
-        <div class="cat-cart-page__cart-description">
-          <div class="cat-cart-page__title">
+        <div class="cart-page__cart-sidebar">
+          <div class="cart-page__title">
             В корзине {{ cartItemsCount }} {{ getCartItemsCountEndCaption }}
           </div>
-          <div class="cat-cart-page__cart-sum">
+          <div class="cart-page__cart-sum">
             на {{ cartItemsTotalPrice.toLocaleString() }} руб.
           </div>
-          <span class="cat-cart-page__cart-clear" @click="cleanCart"
+          <span class="cart-page__cart-clear" @click="clean"
             >Очистить корзину</span
           >
-          <div class="cart-button">
+          <div class="cart-page__button">
             <app-button
               btnText="Перейти к оформлению"
               @action="$router.push($router.options.history.state.back)"
@@ -91,35 +80,42 @@
 </template>
 
 <script>
-import AppCatCartItem from "@/components/AppCatCartItem.vue";
+import AppCartList from "@/components/AppCartList.vue";
+// import AppCatCartItem from "@/components/AppCartListItem.vue";
+import GoBackBtn from "@/UI/AppGoBackBtn.vue";
 import AppButton from "@/UI/AppButton.vue";
 
-import { mapGetters, mapMutations } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   computed: {
-    ...mapGetters([
+    ...mapGetters("cart", [
       "cartItems",
       "cartItemsCount",
       "cartItemsTotalPrice",
     ]),
     getCartItemsCountEndCaption() {
-      console.log(this.cartItemsCount !== 11)
-      if ((this.cartItemsCount % 10 === 1) && (this.cartItemsCount !== 11)) return "кот";
-      else if (this.cartItemsCount % 10 > 1 && this.cartItemsCount <= 4) return "кота";
-      else if (this.cartItemsCount >= 4 || this.cartItemsCount === 11) return "котов";
-    },
-    goBack() {
-      return this.$router.options.history.state.back;
+      if (this.cartItemsCount % 10 === 1 && this.cartItemsCount !== 11)
+        return "кот";
+      else if (this.cartItemsCount % 10 > 1 && this.cartItemsCount <= 4)
+        return "кота";
+      else if (this.cartItemsCount >= 4 || this.cartItemsCount === 11)
+        return "котов";
     },
   },
   methods: {
-    ...mapMutations(["cleanCart"]),
+    ...mapActions("cart", ["cleanCart"]),
+    ...mapActions("cats", ["changeCatCartValues"]),
+    // TODO: переименовать метод
+    clean() {
+      this.cleanCart();
+      this.changeCatCartValues();
+    },
     getImgUrl(pictureName) {
       return require("@/assets/img/" + pictureName);
     },
   },
-  components: { AppCatCartItem, AppButton },
+  components: { AppButton, GoBackBtn, AppCartList },
 };
 </script>
 
@@ -140,7 +136,7 @@ export default {
 .cart-button
   margin-bottom: 20px
 
-.cat-cart-page
+.cart-page
   display: flex
   flex-direction: column
 
@@ -150,7 +146,7 @@ export default {
     @media screen and (max-width: 1027px)
       margin: 0 auto
 
-  &__cart-description
+  &__cart-sidebar
     text-align: center
     padding: 20px 10px
     margin-right: auto

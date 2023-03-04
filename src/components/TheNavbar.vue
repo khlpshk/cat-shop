@@ -4,7 +4,7 @@
       <router-link class="navbar__link" to="/">Главная</router-link>
     </li>
     <li class="navbar__item">
-      <router-link class="navbar__link" to="/gallery">Галлерея</router-link>
+      <router-link class="navbar__link" to="/galery">Галерея</router-link>
     </li>
     <li class="navbar__item">
       <router-link class="navbar__link" to="/news">Новости</router-link>
@@ -36,12 +36,14 @@
     font-size: 20px
     line-height: 21px
     color: #fff
+    padding-bottom: 6px
     @media screen and (max-width: 767px)
       font-size: 20px
       margin-bottom: 15px
     &.active
       color: #466abf
       border-bottom: 3px solid #466abf
+      padding-bottom: 3px
       @media screen and (max-width: 767px)
         border: none
         font-size: 22px

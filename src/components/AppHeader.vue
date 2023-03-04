@@ -1,4 +1,5 @@
 <template>
+<!-- Переименовать компонент в TheHeader -->
   <header class="header">
     <div class="header__default">
       <div class="header__content container">
@@ -15,8 +16,10 @@
           </div>
         </div>
         <div class="header__section">
-          <div class="header__cats-count">
-            <h1>Найдено {{ catsCount }} котов</h1>
+          <div class="header__cats-count" v-if="$route.path === '/'">
+            <h1>
+              Найдено <span v-if="isCatsLoading" class="cl1"><app-loader/></span><span v-else>{{ catsCount }}</span> {{ getCatsCountEndCaption }}
+            </h1>
           </div>
           <div class="header__icon-group">
             <router-link to="/cart">
@@ -37,18 +40,12 @@
         <div class="header__cats-count" v-if="$route.path === '/'">
           <h1>Найдено {{ catsCount }} {{ getCatsCountEndCaption }}</h1>
         </div>
-        <div
-          class="header__burger-btn"
-          :class="{ 'header__burger-btn_active': showBurgerMenu }"
-          @click="showBurgerMenu = !showBurgerMenu"
-        >
-          <span></span>
-        </div>
+        <app-burger-btn :isActive="showBurgerMenu" @changeSt="method" />
       </div>
       <div
         class="header__burger-menu"
         :class="{ 'header__burger-menu_active': showBurgerMenu }"
-        @click="showBurgerMenu = false"
+        @click="method"
       >
         <the-navbar />
         <a href="tel:+544 3490 00000" class="contacts__phone-number"
@@ -68,41 +65,58 @@
 </template>
 
 <script>
+// TODO: уменьшить компонент
 import CartIcon from "../UI/CartIcon.vue";
 import FavoriteIcon from "../UI/FavoriteIcon.vue";
 import TheNavbar from "@/components/TheNavbar.vue";
 import TheContacts from "@/components/TheContacts.vue";
+import AppBurgerBtn from "@/UI/AppBurgerButton.vue";
+import AppLoader from "@/UI/AppLoader.vue";
 import { mapGetters } from "vuex";
 
 export default {
   data() {
     return {
+      // TODO: rename variable name
       showBurgerMenu: false,
     };
   },
-  components: { CartIcon, FavoriteIcon, TheNavbar, TheContacts },
+  components: {
+    CartIcon,
+    FavoriteIcon,
+    TheNavbar,
+    TheContacts,
+    AppBurgerBtn,
+    AppLoader,
+  },
   computed: {
-    ...mapGetters(["catsCount", "getCatsCountEndCaption", "burgerOpened"]),
+    ...mapGetters("cats", ["catsCount", "isCatsLoading"]),
+    getWidth() {
+      console.log(document.body.scrollWidth)
+      return document.body.scrollWidth >= 767
+    },
     getCatsCountEndCaption() {
       if (this.catsCount % 10 === 1 && this.catsCount !== 11) return "кот";
       else if (this.catsCount % 10 > 1 && this.catsCount <= 4) return "кота";
       else if (this.catsCount >= 4 || this.catsCount === 11) return "котов";
     },
-    // method() {
-    //   this.showBurgerMenu = !this.showBurgerMenu;
-    //   document.body.style.overflow = this.showBurgerMenu ? "hidden" : "scroll";
-    // },
   },
-  methods: {},
+  methods: {
+    // TODO: rename method's name
+    method() {
+      this.showBurgerMenu = !this.showBurgerMenu;
+      document.body.style.overflow = this.showBurgerMenu ? "hidden" : "scroll";
+    },
+  },
 };
 </script>
 
 <style lang="sass">
-
-.cat-founds
-  font-weight: 700
-  font-size: 38px
-  line-height: 46px
+// TODO: изменить название класса
+.cl1
+  display: inline-block
+  width: 25px
+  height: 25px
 
 .header
   background-image: url("@/assets/img/header-background.png")
@@ -111,13 +125,62 @@ export default {
   font-size: 18px
   line-height: 22px
 
+  &__content
+    display: flex
+    flex-direction: column
+
+  &__section
+    padding-top: 40px
+    padding-bottom: 66px
+    display: flex
+    flex-flow: row wrap
+    align-items: center
+    justify-content: space-between
+    gap: 50px
+    @media screen and ( max-width:  900px)
+      gap: 25px
+      padding-top: 20px
+      padding-bottom: 46px
+
+  &__logo
+    background-image: url("@/assets/img/logo.png")
+    background-position: center
+    background-size: cover
+    width: 78px
+    height: 51px
+    @media screen and (max-width: 767px)
+      width: 40px
+      height: 40px
+    @media screen and ( max-width: 1018px)
+      order: -1
+
+  &__navigation
+    @media screen and ( max-width: 1018px)
+      order: 1
+
+  &__contacts
+    @media screen and ( max-width: 1018px)
+      order: 0
+
   &__cats-count
+    padding-bottom: 3px
     font-weight: 700
     font-size: 38px
     line-height: 46px
     color: #fff
     @media screen and (max-width: 767px)
       font-size: 14px
+
+  &__icon-group
+    margin-left: auto
+    // align-self: flex-end
+    display: flex
+    gap: 50px
+    @media screen and (max-width: 767px)
+      justify-content: flex-end
+      padding-right: 35px
+
+
 
   &__default
     height: 100%
@@ -152,50 +215,6 @@ export default {
     height: 40px
     z-index: 3
 
-  &__burger-btn
-    width: 42px
-    height: 42px
-    position: relative
-    z-index: 3
-
-    &::before
-      margin-top: 10px
-      content: ''
-      display: block
-      width: 40px
-      height: 2px
-      background-color: #fff
-      margin-bottom: 7px
-      transition: all .3s ease 0s
-    &_active::before
-      // margin-top: 5px
-      position: absolute
-      top: 11px
-      transform: rotate(45deg)
-    & span
-      display: block
-      width: 40px
-      height: 2px
-      background-color: #fff
-      top: 9px
-      margin-bottom: 7px
-      transition: all .1s ease 0s
-    &_active span
-      // opacity: 0
-      transform: scale(0)
-    &::after
-      content: ''
-      display: block
-      width: 40px
-      height: 2px
-      background-color: #fff
-      margin-bottom: 7px
-      transition: all .3s ease 0s
-    &_active::after
-      position: absolute
-      bottom: 12px
-      transform: rotate(-45deg)
-
   &__burger-menu
     overflow: scroll
     position: fixed
@@ -213,56 +232,4 @@ export default {
     &_active
       display: block
       top: 30px
-
-  &__logo
-    background-image: url("@/assets/img/logo.png")
-    background-position: center
-    background-size: cover
-    width: 78px
-    height: 51px
-    @media screen and (max-width: 767px)
-      width: 40px
-      height: 40px
-    @media screen and ( max-width: 1074px)
-      order: -1
-
-  &__navigation
-    @media screen and ( max-width: 1074px)
-      order: 1
-
-  &__contacts
-    @media screen and ( max-width: 1074px)
-      order: 0
-
-  &__content
-    padding-top: 40px
-    padding-bottom: 66px
-    display: flex
-    flex-direction: column
-    gap: 50px
-    @media screen and ( max-width:  900px)
-      gap: 25px
-      padding-top: 20px
-      padding-bottom: 46px
-
-  &__section
-    display: flex
-    flex-flow: row wrap
-    align-items: center
-    column-gap: 50px
-    row-gap: 50px
-    color: #fff
-    & div:last-child
-      margin-right: 0
-      margin-left: auto
-    & div:first-child
-      margin-left: 0
-      margin-right: auto
-
-  &__icon-group
-    display: flex
-    gap: 50px
-    @media screen and (max-width: 767px)
-      justify-content: flex-end
-      padding-right: 35px
 </style>

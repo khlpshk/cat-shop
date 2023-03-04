@@ -14,6 +14,7 @@
   display: flex
   flex-flow: column
   row-gap: 10px
+  color: #fff
 
   &__item
     display: flex
@@ -24,6 +25,8 @@
     display: block
     margin-left: auto
     margin-right: 0
+    @media screen and (max-width: 767px)
+      display: none
 
   &__phone-number
     display: block
