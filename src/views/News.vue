@@ -1,12 +1,29 @@
 <template>
-  <not-developed />
+  <app-go-back-btn />
+  <router-view></router-view>
 </template>
 
 <script>
-import NotDeveloped from "@/components/NotDeveloped.vue";
+import AppGoBackBtn from "@/UI/AppGoBackBtn.vue";
+import { mapGetters, mapActions } from "vuex";
+
 export default {
-  components: { NotDeveloped },
+  components: { AppGoBackBtn },
+  mounted() {
+    this.getNews();
+  },
+  methods: {
+    ...mapActions('news', ['getNews'])
+  },
 };
 </script>
 
-<style></style>
+<style lang="sass" scoped>
+.news-cards
+  display: flex
+  flex-direction: column
+  justify-content: center
+
+  &__item
+    margin: 0 auto 20px
+</style>
